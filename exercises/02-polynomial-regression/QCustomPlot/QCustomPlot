@@ -1,0 +1,6 @@
+#ifndef __QCUSTOMPLOT__
+#define __QCUSTOMPLOT__
+
+#include "qcustomplot.h"
+
+#endif  // __QCUSTOMPLOT__
