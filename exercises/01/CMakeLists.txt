@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(exercise_01 VERSION 0.1.0 LANGUAGES CXX)
 
-add_subdirectory(QCustomPlot)
-
 add_executable(plot plot.cc)
 target_compile_features(plot PRIVATE cxx_std_11)
 target_link_libraries(plot PRIVATE Qt5::CustomPlot)
