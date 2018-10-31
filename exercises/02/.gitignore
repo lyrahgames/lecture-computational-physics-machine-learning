@@ -1,5 +1,4 @@
 *
-!QCustomPlot/
 !*.cc
 !*.h
 !CMakeLists.txt

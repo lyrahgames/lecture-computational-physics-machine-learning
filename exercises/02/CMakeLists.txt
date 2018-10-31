@@ -6,3 +6,7 @@ find_package(Eigen3 REQUIRED)
 add_executable(regression main.cc)
 target_compile_features(regression PRIVATE cxx_std_11)
 target_link_libraries(regression PRIVATE Qt5::CustomPlot Eigen3::Eigen)
+
+add_executable(data_in_model_class data_in_model_class.cc)
+target_compile_features(data_in_model_class PRIVATE cxx_std_11)
+target_link_libraries(data_in_model_class PRIVATE Qt5::CustomPlot Eigen3::Eigen)
