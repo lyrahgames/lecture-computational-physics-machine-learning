@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -11,7 +12,7 @@
 
 template <typename Real>
 Real function(Real x) {
-  return 2 * x;
+  return 2 * x - 10 * std::pow(x, 5) + 15 * std::pow(x, 10);
 }
 
 int main(int argc, char** argv) {
