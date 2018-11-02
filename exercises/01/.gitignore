@@ -1,5 +1,8 @@
 *
+!screenshots
+!screenshots/*.png
 !*.cc
 !*.h
 !CMakeLists.txt
+!README.md
 !.gitignore
