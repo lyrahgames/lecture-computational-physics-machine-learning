@@ -1,8 +1,12 @@
 !QCustomPlot
 !01
 !02
+!03
+!04
+!05
 
 !*.cc
 !*.h
-
+!*.pdf
 !CMakeLists.txt
+!README.md
