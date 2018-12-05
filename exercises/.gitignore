@@ -1,8 +1,8 @@
-*
-
 !QCustomPlot
 !01
 !02
 
+!*.cc
+!*.h
+
 !CMakeLists.txt
-!.gitignore
