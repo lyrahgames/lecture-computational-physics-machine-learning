@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(exercise-03 VERSION 0.1.0 LANGUAGES CXX)
+project(exercise-04 VERSION 0.1.0 LANGUAGES CXX)
 
 find_package(Eigen3 REQUIRED)
 

@@ -57,11 +57,11 @@ struct neural_network {
           (weight[i].transpose() * z[i]).array() *
           t[i - 1].array().unaryExpr(std::ref(sigmoid_derivative<float>));
       weight[i] += learn_rate * z[i] * f[i - 1].transpose();
-      bias[i] += learn_rate * z[i];
+      // bias[i] += learn_rate * z[i];
     }
 
     weight[0] += learn_rate * z[0] * input.transpose();
-    bias[0] += learn_rate * z[0];
+    // bias[0] += learn_rate * z[0];
   }
 };
 
