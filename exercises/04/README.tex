@@ -1,10 +1,130 @@
 \documentclass[a4paper,fleqn]{article}
 \usepackage{times}
+\linespread{1.15}
 
-\usepackage{amsmath,mathtools}
+\usepackage{amsmath,mathtools,dsfont,tensor}
+\allowdisplaybreaks
 
 \begin{document}
-  \noindent
+  \section*{Neural Network with Layers}
+    Let $n\in\mathds{N}$ be the count of layers (do not count the input layer) in a given fully-connected feed-forward neural network.
+    Then one can describe the network through an activation function $\sigma\colon\mathds{R}\to[0,1]$, weight matrices $(W_k)_{k=1}^n$ and bias vectors $(B_k)_{k=1}^n$ with the following properties for all $k\in\mathds{N}$ with $k\leq n$.
+    \[
+      W_k \in \mathds{R}^{p_k \times q_k}
+      \qquad
+      B_k \in \mathds{R}^{p_k}
+      \qquad
+      p_k,q_k \in \mathds{N}
+    \]
+    $p_k$ is the number of neurons and $q_k$ the number of inputs in the $k$.~layer.
+    The dimensions have to fulfill a certain consistency condition such that the matrix-vector-product can be defined between each layer.
+    For all $k\in\mathds{N}$ with $k<n$ it holds
+    \[
+      p_k = q_{k+1}
+    \]
+    Then the output of the $k$.~layer with respect to its input is described by the following function.
+    We define $\bar{\sigma}$ to be the element-wise application of $\sigma$ to a vector.
+    \[
+      f\left[W_k,B_k\right]\colon[0,1]^{q_k}\to[0,1]^{p_k}
+      \qquad
+      f\left[W_k,B_k\right](x) \coloneqq \bar{\sigma}(W_k x + B_k)
+    \]
+    The overall output $f$ of the complete network is then described by composition of these functions.
+    \[
+      f\left[(W_k,B_k)_{k=1}^n\right]\colon[0,1]^{q_1}\to[0,1]^{p_n}
+    \]
+    \[
+      f\left[(W_k,B_k)_{k=1}^n\right] \coloneqq f\left[W_n,B_n\right] \circ \ldots \circ f\left[W_1,B_1\right] = \bigcirc_{k=1}^n f\left[W_k,B_k\right]
+    \]
+
+  \section*{Error Function}
+    Given $m\in\mathds{N}$ labeled training samples $(x_k,y_k)_{k=1}^m$ with $x_k\in[0,1]^{q_1}$ and $y_k\in[0,1]^{p_n}$ for all $k\in\mathds{N}$ with $k\leq m$ we can define the total error of the given neural network by the mean-squared-error $\varepsilon\left[(x_i,y_i)_{i=1}^m\right]$.
+    \[
+      \varepsilon\left[(x_i,y_i)_{i=1}^m\right]\colon\bigtimes_{k=1}^n \left( \mathds{R}^{p_k\times q_k} \times \mathds{R}^{p_k} \right) \to \mathds{R}
+    \]
+    \[
+      \varepsilon\left[(x_i,y_i)_{i=1}^m\right]\left((W_k,B_k)_{k=1}^n\right) \coloneqq \frac{1}{m}\sum_{i=1}^m \left\| y_i - f\left[(W_k,B_k)_{k=1}^n\right](x_i) \right\|^2
+    \]
+
+  \section*{Gradients of the Error Function}
+    The gradients of the error function can be computed by using the abstract index notation.
+    This process is error-prone and cumbersome and will only be shown for the example gradient $\nabla_{W_n}\varepsilon\left[(x_i,y_i)_{i=1}^m\right]$.
+    First, we start by reformulating the error function with the abstract index notation.
+    \begin{align*}
+      &\varepsilon\left[(x_i,y_i)_{i=1}^m\right]\left((W_k,B_k)_{k=1}^n\right)\\
+      &= \frac{1}{m}\sum_{i=1}^m \left\| y_i - f\left[(W_k,B_k)_{k=1}^n\right](x_i) \right\|^2 \\
+      &= \frac{1}{m}\sum_{i=1}^m \left(
+        y_i - f\left[(W_k,B_k)_{k=1}^n\right](x_i) \right)^\mathrm{T} \left( y_i - f\left[(W_k,B_k)_{k=1}^n\right](x_i)
+      \right) \\
+      &\equiv \frac{1}{m} \sum_{i=1}^m \left(y\indices{_i_\alpha} - f_\alpha\left[(W_k,B_k)_{k=1}^n\right](x_i)\right) \left(y\indices{_i^\alpha} - f^\alpha\left[(W_k,B_k)_{k=1}^n\right]\left(x_i\right)\right)
+    \end{align*}
+    Now we compute the partial derivate of a certain component of the gradient matrix.
+    \begin{align*}
+      &\left[ \nabla_{W_n}\varepsilon\left[(x_i,y_i)_{i=1}^m\right]\left((W_k,B_k)_{k=1}^n\right) \right]^\mathrm{T} \\
+      &\equiv \partial_{W\indices{_n^\mu_\nu}} \frac{1}{m} \sum_{i=1}^m \left(y\indices{_i_\alpha} - f_\alpha\left[(W_k,B_k)_{k=1}^n\right](x_i)\right) \left(y\indices{_i^\alpha} - f^\alpha\left[(W_k,B_k)_{k=1}^n\right]\left(x_i\right)\right) \\
+      &= -\frac{2}{m} \sum_{i=1}^m \left(y\indices{_i_\alpha} - f_\alpha\left[(W_k,B_k)_{k=1}^n\right](x_i)\right) \partial_{W\indices{_n^\mu_\nu}} f^\alpha\left[(W_k,B_k)_{k=1}^n\right]\left(x_i\right)
+    \end{align*}
+    \begin{align*}
+      &\partial_{W\indices{_n^\mu_\nu}} f^\alpha\left[(W_k,B_k)_{k=1}^n\right]\left(x_i\right) \\
+      &= \partial_{W\indices{_n^\mu_\nu}} \sigma\left(W\indices{_n^\alpha_\beta} f^\beta\left[(W_k,B_k)_{k=1}^{n-1}\right]\left(x_i\right) + B\indices{_n^\alpha} \right) \\
+      &= \sigma'\left(W\indices{_n^\alpha_\beta} f^\beta\left[(W_k,B_k)_{k=1}^{n-1}\right]\left(x_i\right) + B\indices{_n^\alpha} \right) \delta_\mu^\alpha \delta_\beta^\nu f^\beta\left[(W_k,B_k)_{k=1}^{n-1}\right]\left(x_i\right) \\
+      &= \sigma'\left(W\indices{_n^\alpha_\beta} f^\beta\left[(W_k,B_k)_{k=1}^{n-1}\right]\left(x_i\right) + B\indices{_n^\alpha} \right) \delta_\mu^\alpha f^\nu\left[(W_k,B_k)_{k=1}^{n-1}\right]\left(x_i\right)
+    \end{align*}
+    Putting all together we get the result for the complete gradient.
+    Please note that I have transposed the matrix to build the real gradient.
+    We define $\bar{\sigma'}$ to be the element-wise application of $\sigma'$ to a vector.
+    \begin{align*}
+      &\nabla_{W_n}\varepsilon\left[(x_i,y_i)_{i=1}^m\right]\left((W_k,B_k)_{k=1}^n\right) \\
+      & = -\frac{2}{m} \sum_{i=1}^m
+        \begin{aligned}[t]
+          &\left\{ \left(y\indices{_i} - f\left[(W_k,B_k)_{k=1}^n\right](x_i)\right) \odot \bar{\sigma'}\left(W\indices{_n} f\left[(W_k,B_k)_{k=1}^{n-1}\right]\left(x_i\right) + B\indices{_n} \right) \right\} \\
+          &\cdot \left\{ f\left[(W_k,B_k)_{k=1}^{n-1}\right]\left(x_i\right) \right\}^\mathrm{T}
+        \end{aligned}
+    \end{align*}
+    The other gradients can be computed analogously.
+    If we apply this process iteratively to every weight matrix and bias vector then we get recursive formulas to compute every gradient.
+    The algorithm is given below.
+
+  \section*{Forward Feed Algorithm}
+    For convenience we define the following for a given input $x\in[0,1]^{q_1}$.
+    \[
+      f_0 \coloneqq x
+    \]
+    For all $k\in\mathds{N}$ with $k\leq n$ we compute the following recursive formulas.
+    \[
+      t_k \coloneqq W_k f_{k-1} + B_k
+    \]
+    \[
+      f_k \coloneqq \bar{\sigma}(t_k)
+    \]
+    $t_k$ describes the net input vector and $f_k$ the output vector of the $k$.~layer.
+    Therefore $f_n$ is the output of the complete neural network.
+
+  \section*{Backward Feed Algorithm}
+    Calculate a first temporary vector.
+    \[
+      z_n \coloneqq (y - f_n)\odot \bar{\sigma'}(t_n)
+    \]
+    For all $k\in\mathds{N}$ with $k<n$ compute the following vectors.
+    \[
+      z_k \coloneqq \left(W_{k+1}^\mathrm{T} z_{k+1}\right) \odot \bar{\sigma'}(t_k)
+    \]
+    Get the gradients from the temporary vectors.
+    \[
+      \nabla_{W_k}e = -2 z_k \cdot f^\mathrm{T}_{k-1}
+    \]
+    \[
+      \nabla_{B_k}e = -2 z_k
+    \]
+    Use the gradients for an optimization algorithm like the steepest descent method with learning rate $\eta$.
+    \[
+      W_k \quad \longleftarrow \quad W_k - \eta\nabla_{W_k}e
+    \]
+    \[
+      B_k \quad \longleftarrow \quad B_k - \eta\nabla_{B_k}e
+    \]
+
+  \section*{Results}
   labeled training sample $(x,y)$
   \[
     x \coloneqq
