@@ -1,4 +1,5 @@
 #include <cmath>
+#include <functional>
 #include <iostream>
 
 #include <QApplication>
@@ -6,38 +7,45 @@
 #include "plot.h"
 
 template <typename Real>
-Real sigmoid(Real x) {
-  return Real{1} / (Real{1} + std::exp(-x));
-}
-
-template <typename Real>
-Real sigmoid_derivative(Real x) {
-  return sigmoid(x) * (Real{1} - sigmoid(x));
-}
-
-template <typename Real>
 Real square(Real x) {
   return x * x;
 }
 
 template <typename Real>
-Real sigtanh(Real x) {
-  return (Real{1} + std::tanh(x)) / Real{2};
-}
+struct sigmoid {
+  Real operator()(Real x) const noexcept {
+    return Real{1} / (Real{1} + std::exp(-x));
+  }
+  Real gradient(Real x) const noexcept {
+    const auto tmp = operator()(x);
+    return tmp * (Real{1} - tmp);
+  }
+};
 
 template <typename Real>
-Real sigtanh_derivative(Real x) {
-  return (Real{1} - square(std::tanh(x))) / Real{2};
+struct sigtanh {
+  Real operator()(Real x) const noexcept {
+    return (Real{1} + std::tanh(x)) / Real{2};
+  }
+  Real gradient(Real x) const noexcept {
+    return (Real{1} - square(std::tanh(x))) / Real{2};
+  }
+};
+
+template <typename Function>
+auto nabla(Function&& f) {
+  return std::bind(&Function::gradient, std::forward<Function>(f),
+                   std::placeholders::_1);
 }
 
 int main(int argc, char* argv[]) {
   QApplication application(argc, argv);
-  Plot plot;
 
-  plot.plot_function("sigmoid", sigmoid<double>, -5, 5);
-  plot.plot_function("sigmoid'", sigmoid_derivative<double>, -5, 5);
-  plot.plot_function("sigtanh", sigtanh<double>, -5, 5);
-  plot.plot_function("sigtanh'", sigtanh_derivative<double>, -5, 5);
+  Plot plot;
+  plot.plot_function("sigmoid", sigmoid<double>{}, -5, 5);
+  plot.plot_function("sigmoid'", nabla(sigmoid<double>{}), -5, 5);
+  plot.plot_function("sigtanh", sigtanh<double>{}, -5, 5);
+  plot.plot_function("sigtanh'", nabla(sigtanh<double>{}), -5, 5);
 
   return application.exec();
 }
