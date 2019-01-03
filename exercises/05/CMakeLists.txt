@@ -12,3 +12,12 @@ set_target_properties(activation PROPERTIES AUTOMOC TRUE)
 add_executable(neural_network_and neural_network_and.cc)
 target_compile_features(neural_network_and PRIVATE cxx_std_17)
 target_link_libraries(neural_network_and PRIVATE Eigen3::Eigen)
+
+add_library(neural_network INTERFACE)
+target_include_directories(neural_network INTERFACE .)
+target_compile_features(neural_network INTERFACE cxx_std_17)
+target_link_libraries(neural_network INTERFACE Eigen3::Eigen)
+add_library(neural_network::neural_network ALIAS neural_network)
+
+enable_testing()
+add_subdirectory(tests)
