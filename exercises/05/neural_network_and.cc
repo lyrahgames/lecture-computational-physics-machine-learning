@@ -136,8 +136,8 @@ int main() {
   inputs[1] << 0, 1;
   inputs[2] << 1, 0;
   inputs[3] << 1, 1;
-  vector<VectorXf> labels{VectorXf::Zero(1), VectorXf::Ones(1),
-                          VectorXf::Ones(1), VectorXf::Zero(1)};
+  vector<VectorXf> labels{VectorXf::Zero(1), VectorXf::Zero(1),
+                          VectorXf::Zero(1), VectorXf::Ones(1)};
   vector<VectorXf> outputs(inputs.size());
 
   // initial weight and bias
@@ -172,7 +172,7 @@ int main() {
   }
   cout << endl;
 
-  const int iterations = 10000;
+  const int iterations = 1;
   for (auto i = 0; i < iterations; ++i) {
     network.learn(begin(inputs), end(inputs), begin(labels));
   }

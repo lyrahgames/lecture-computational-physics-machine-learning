@@ -19,5 +19,8 @@ target_compile_features(neural_network INTERFACE cxx_std_17)
 target_link_libraries(neural_network INTERFACE Eigen3::Eigen)
 add_library(neural_network::neural_network ALIAS neural_network)
 
+add_executable(and and.cc)
+target_link_libraries(and PRIVATE neural_network::neural_network)
+
 enable_testing()
 add_subdirectory(tests)

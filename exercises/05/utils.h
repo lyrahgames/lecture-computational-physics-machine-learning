@@ -31,9 +31,10 @@ struct sigtanh {
 };
 
 template <typename Function>
-constexpr auto nabla(Function&& f) noexcept {
-  return std::bind(&Function::gradient, std::forward<Function>(f),
-                   std::placeholders::_1);
+constexpr auto nabla(const Function& f) noexcept {
+  // return std::bind(&Function::gradient, std::forward<Function>(f),
+  //                  std::placeholders::_1);
+  return [f](auto x) { return f.gradient(x); };
 }
 
 #endif  // UTILS_H_
