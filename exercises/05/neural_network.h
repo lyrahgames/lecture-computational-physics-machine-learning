@@ -247,8 +247,8 @@ std::ostream& operator<<(std::ostream& os,
 
   os << "training data with current output:" << endl;
   for (auto i = 0; i < network.input().size(); ++i) {
-    os << network.input(i).transpose() << "\t\t" << network.label(i) << "\t\t"
-       << network.output(i) << endl;
+    os << network.input(i).transpose() << "\t\t" << network.label(i).transpose()
+       << "\t\t" << network.output(i).transpose() << endl;
   }
   os << endl
      << "error = " << network.error() << endl

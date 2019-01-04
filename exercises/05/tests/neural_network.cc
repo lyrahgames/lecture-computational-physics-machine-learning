@@ -62,6 +62,20 @@ TEST_CASE("AND") {
   network.train();
 }
 
+TEST_CASE("4.Exercise") {
+  neural_network<sigmoid<float>> network{2, 2, 2};
+  network.weight(0, {0.15, 0.20, 0.25, 0.30})
+      .weight(1, {0.40, 0.45, 0.50, 0.55})
+      .bias(0, {0.35, 0.35})
+      .bias(1, {0.60, 0.60})
+      .training_data({{{0.05, 0.10}, {0.01, 0.99}}})
+      .learn_rate(0.5)
+      .compute_output_and_error();
+  MESSAGE("initial network:\n" << network);
+  network.train().compute_output_and_error();
+  MESSAGE("network after training:\n" << network);
+}
+
 TEST_CASE("") {
   std::vector<int> data{1, 2, 3};
   neural_network<sigmoid<float>> network(data.begin(), data.end());
