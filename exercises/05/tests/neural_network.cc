@@ -69,10 +69,9 @@ TEST_CASE("4.Exercise") {
       .bias(0, {0.35, 0.35})
       .bias(1, {0.60, 0.60})
       .training_data({{{0.05, 0.10}, {0.01, 0.99}}})
-      .learn_rate(0.5)
-      .compute_output_and_error();
+      .learn_rate(0.5);
   MESSAGE("initial network:\n" << network);
-  network.train().compute_output_and_error();
+  network.train();
   MESSAGE("network after training:\n" << network);
 }
 

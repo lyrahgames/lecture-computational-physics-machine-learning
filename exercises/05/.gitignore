@@ -2,3 +2,6 @@
 
 !screenshots
 !screenshots/*.png
+
+!results
+!results/*.txt

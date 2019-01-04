@@ -166,12 +166,43 @@ class neural_network {
   }
 
  public:
+  neural_network& compute_output_and_error() {
+    for (auto i = 0; i < layer_count() - 1; ++i) {
+      weight_gradient_[i] = Matrix::Zero(weight_[i].rows(), weight_[i].cols());
+      bias_gradient_[i] = Vector::Zero(bias_[i].size());
+    }
+
+    const float inverse_count = 1.0f / input_.size();
+    error_ = 0.0f;
+
+    for (auto i = 0; i < input_.size(); ++i) {
+      forward_feed(input_[i]);
+      output_[i] = layer_out_.back();
+      error_ += 0.5 * (label_[i] - layer_out_.back()).squaredNorm();
+      backward_feed(input_[i], label_[i]);
+    }
+
+    error_ /= input_.size();
+
+    return *this;
+  }
+
+  neural_network& train() {
+    const float inverse_count = 1.0f / input_.size();
+    for (auto i = 0; i < layer_count() - 1; ++i) {
+      weight_[i] += learn_rate_ * weight_gradient_[i] * inverse_count;
+      bias_[i] += learn_rate_ * bias_gradient_[i] * inverse_count;
+    }
+    return compute_output_and_error();
+  }
+
   neural_network& training_data(
       std::initializer_list<std::pair<std::initializer_list<value_type>,
                                       std::initializer_list<value_type>>>
           list) {
     input_.resize(std::size(list));
     label_.resize(std::size(list));
+    output_.resize(input_.size());
     auto it = std::begin(list);
     for (auto i = 0; it != std::end(list); ++i, ++it) {
       assert(std::size(it->first) == layer_size_.front());
@@ -189,45 +220,7 @@ class neural_network {
           label_[i].data()[j] = *tmp_it;
       }
     }
-    return *this;
-  }
-
-  neural_network& train() {
-    for (auto i = 0; i < layer_count() - 1; ++i) {
-      weight_gradient_[i] = Matrix::Zero(weight_[i].rows(), weight_[i].cols());
-      bias_gradient_[i] = Vector::Zero(bias_[i].size());
-    }
-
-    const float inverse_count = 1.0f / input_.size();
-    // error_ = 0.0f;
-
-    for (auto i = 0; i < input_.size(); ++i) {
-      forward_feed(input_[i]);
-      // error_ += 0.5 * (label_[i] - layer_out_[layer_count() -
-      // 2]).squaredNorm();
-      backward_feed(input_[i], label_[i]);
-    }
-
-    // error_ *= inverse_count;
-
-    for (auto i = 0; i < layer_count() - 1; ++i) {
-      weight_[i] += learn_rate_ * weight_gradient_[i] * inverse_count;
-      bias_[i] += learn_rate_ * bias_gradient_[i] * inverse_count;
-    }
-
-    return *this;
-  }
-
-  neural_network& compute_output_and_error() {
-    output_.resize(input_.size());
-    error_ = 0.0f;
-    for (auto i = 0; i < input_.size(); ++i) {
-      forward_feed(input_[i]);
-      output_[i] = layer_out_.back();
-      error_ += 0.5 * (label_[i] - layer_out_.back()).squaredNorm();
-    }
-    error_ /= input_.size();
-    return *this;
+    return compute_output_and_error();
   }
 };
 

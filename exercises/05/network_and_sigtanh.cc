@@ -11,11 +11,11 @@ int main() {
       .bias(1, {0.05})
       .training_data(
           {{{0, 0}, {0}}, {{1, 0}, {0}}, {{0, 1}, {0}}, {{1, 1}, {1}}})
-      .learn_rate(0.5)
-      .compute_output_and_error();
+      .learn_rate(0.5);
 
-  std::cout << network << std::endl;
-
-  network.train().compute_output_and_error();
-  std::cout << network << std::endl;
+  std::cout << "initial network:\n" << network << std::endl;
+  network.train();
+  std::cout << "trained network:\n" << network << std::endl;
+  for (auto i = 1; i < 10000; ++i) network.train();
+  std::cout << "final network:\n" << network << std::endl;
 }
