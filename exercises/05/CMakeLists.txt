@@ -33,6 +33,8 @@ target_link_libraries(nand_sigtanh PRIVATE neural_network::neural_network)
 add_executable(and_xor_sigtanh network_and_xor_sigtanh.cc)
 target_link_libraries(and_xor_sigtanh PRIVATE neural_network::neural_network)
 
+add_executable(and_learn_rate_sigtanh network_and_learn_rate_sigtanh.cc)
+target_link_libraries(and_learn_rate_sigtanh PRIVATE neural_network::neural_network)
 
 enable_testing()
 add_subdirectory(tests)
